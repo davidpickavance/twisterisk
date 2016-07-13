@@ -1,6 +1,9 @@
 clear
-#sudo su
 echo "this is my shell script"
+if [$#<2]
+then
+echo "This script requires at least two parameters, termination URI and public IP address"
+else
 startingplace=$(pwd)
 yum groupinstall –y Development Tools
 yum install –y ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison
@@ -28,8 +31,19 @@ ldconfig
 cd /etc/asterisk
 mv sip.conf sip.conf.old
 mv extensions.conf extensions.conf.old
-cd startingplace
+cd $startingplace
 echo $(pwd)
 echo $(ls)
+
+sed -i.bak 's/TERMINATIONURI/'$1'/' ./sip.conf
+sed -i.bak 's/OUTSIDE/'$2'/' ./sip.conf
+
+if [$#>3]
+then
+sed -i.bak 's/USERNAME/'$3'/' ./sip.conf
+sed -i.bak 's/PASSWORD/'$4'/' ./sip.conf
+fi
+
 cp sip.conf /etc/asterisk/sip.conf
 cp extensions.conf /etc/asterisk/extensions.conf
+fi
