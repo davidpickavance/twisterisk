@@ -1,6 +1,7 @@
 clear
 #sudo su
 echo "this is my shell script"
+startingplace=$(pwd)
 yum groupinstall –y Development Tools
 yum install –y ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison
 cd /usr/src/
@@ -27,7 +28,6 @@ ldconfig
 cd /etc/asterisk
 mv sip.conf sip.conf.old
 mv extensions.conf extensions.conf.old
-cd ~
-cd twisterisk
+cd startingplace
 cp sip.conf /etc/asterisk/sip.conf
 cp extensions.conf /etc/asterisk/extensions.conf
