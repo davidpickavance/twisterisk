@@ -2,7 +2,7 @@ clear
 #sudo su
 echo "this is my shell script"
 yum groupinstall –y Development Tools
-yum install –y ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison subversion git-core
+yum install –y ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison
 cd /usr/src/
 git clone https://github.com/akheron/jansson.git
 cd jansson
@@ -27,4 +27,7 @@ ldconfig
 cd /etc/asterisk
 mv sip.conf sip.conf.old
 mv extensions.conf extensions.conf.old
-git clone
+cd ~
+cd twisterisk
+cp sip.conf /etc/asterisk/sip.conf
+cp extensions.conf /etc/asterisk/extensions.conf
