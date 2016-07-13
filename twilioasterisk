@@ -29,5 +29,7 @@ cd /etc/asterisk
 mv sip.conf sip.conf.old
 mv extensions.conf extensions.conf.old
 cd startingplace
+echo $(pwd)
+echo $(ls)
 cp sip.conf /etc/asterisk/sip.conf
 cp extensions.conf /etc/asterisk/extensions.conf
