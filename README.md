@@ -41,4 +41,6 @@ On a server with a public IP address of 5.6.7.8, I would run the following comma
 ./twilioasterisk othertrunk 5.6.7.8 myAsteriskUser ElmTreesExtraveganza!1  
 
 **Other Notes**  
-So far, I have only tested this on an EC2 instance running redhat and it is configured assuming that you are based on the USA. At some point, I will extend it to other OS optoins and other regions.
+So far, I have only tested this on an EC2 instance running redhat and it is configured assuming that you are based on the USA. At some point, I will extend it to other OS optoins and other regions.  
+
+Also, you'll need to press "y" a few times during installation stuff on your server
