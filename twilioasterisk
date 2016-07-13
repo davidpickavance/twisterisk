@@ -1,0 +1,30 @@
+clear
+#sudo su
+echo "this is my shell script"
+yum groupinstall –y Development Tools
+yum install –y ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison subversion git-core
+cd /usr/src/
+git clone https://github.com/akheron/jansson.git
+cd jansson
+autoreconf -i
+./configure -prefix=/usr/
+make && make install
+cd ..
+yum install -y wget
+sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.tar.gz
+tar -xzvf asterisk*
+cd asterisk-13.*
+./bootstrap.sh
+./configure
+make && make install
+make samples
+make config
+make samples
+ldconfig
+chkconfig asterisk on
+ldconfig
+cd /etc/asterisk
+mv sip.conf sip.conf.old
+mv extensions.conf extensions.conf.old
+git clone
