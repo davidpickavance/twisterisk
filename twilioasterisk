@@ -47,3 +47,8 @@ fi
 cp sip.conf /etc/asterisk/sip.conf
 cp extensions.conf /etc/asterisk/extensions.conf
 fi
+
+cd /etc/asterisk
+mkdir keys
+cd /usr/src/asterisk-13.*
+./contrib/scripts/ast_tls_cert -C $2 -O "My PBX" -d /etc/asterisk/keys
