@@ -1,0 +1,10 @@
+[from­-twilio]
+exten => _X.,1,Dial(SIP/1001)
+exten => _+X.,1,Dial(SIP/1001)
+
+[from­-phones]
+exten => _0XXXXXXXXXX,1,Set(CALLERID(all)="Trunk Test" <02035555123>)
+same => n,Dial(SIP/twilio0/+44${EXTEN:1})
+
+exten => _00X.,1,Set(CALLERID(all)="Trunk Test" <+442035555123>)
+same => n,Dial(SIP/twilio0/+${EXTEN:2})
