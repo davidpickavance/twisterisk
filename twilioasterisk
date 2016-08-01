@@ -5,8 +5,10 @@ then
 echo "This script requires at least two parameters, termination URI and public IP address"
 else
 startingplace=$(pwd)
-yum groupinstall –y Development Tools
+yum groupinstall –y 'Development Tools'
+y
 yum install –y ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison
+y
 cd /usr/src/
 git clone https://github.com/akheron/jansson.git
 cd jansson
@@ -46,9 +48,10 @@ fi
 
 cp sip.conf /etc/asterisk/sip.conf
 cp extensions.conf /etc/asterisk/extensions.conf
-fi
+cp extensions.conf.* /etc/asterisk/.
 
 cd /etc/asterisk
 mkdir keys
 cd /usr/src/asterisk-13.*
 ./contrib/scripts/ast_tls_cert -C $2 -O "My PBX" -d /etc/asterisk/keys
+fi
