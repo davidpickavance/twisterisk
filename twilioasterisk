@@ -18,8 +18,8 @@ yum install -y wget
 sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
 
 cd /usr/src
-yum install ­-y words
-wget http://downloads.sourceforge.net/project/srtp/srtp/1.4.4/srtp­-1.4.4.tgz
+yes | yum install words
+wget http://downloads.sourceforge.net/project/srtp/srtp/1.4.4/srtp-1.4.4.tgz
 
 tar zxvf srtp-1.4.4.tgz
 cd /usr/src/srtp
