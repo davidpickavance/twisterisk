@@ -1,10 +1,23 @@
+# This shell script installs Asterisk on Redhat based Linux systems
+# Copyright David Pickavance, 2016
+
+# Start by clearing the output
 clear
-echo "this is my shell script"
+
+# The script requires at least two command line parameters to be passed. If we don't have at
+# least two parameters, don't run the script. Insteadn output some useful help
 if [ $# -lt 2 ]
 then
 echo "This script requires at least two parameters, termination URI and public IP address"
+
+# If we do have at least two parameters, we're going to assume that the user has given them
+# correctly and run the script
 else
+
+# Record where we are in the directory tree so we can come back here later
 startingplace=$(pwd)
+
+# And then install the prerequisite libraries
 yes | yum groupinstall 'Development Tools'
 yes | yum install ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison
 cd /usr/src/
@@ -15,8 +28,13 @@ autoreconf -i
 make && make install
 cd ..
 yum install -y wget
+
+# Turn off SELINUX
 sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
 
+# Now, we're going to instal the SRTP library, in case we want to use TLS/SRTP with
+# our SIP trunk. First, we have to install words, because it is used in the installation
+# of srtp
 cd /usr/src
 yes | yum install words
 wget http://downloads.sourceforge.net/project/srtp/srtp/1.4.4/srtp-1.4.4.tgz
@@ -29,6 +47,7 @@ sed -i.bak 's|RTPW=rtpw|RTPW=./rtpw|' ./test/rtpw_test.sh
 make runtest
 make install
 
+# Then, we download and install Asterisk, telling it to build with SRTP
 cd /usr/src
 wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.tar.gz
 tar -xzvf asterisk*
@@ -39,39 +58,55 @@ make && make install
 make samples
 make config
 make samples
+
+# Make sure we are aware of the new libraries and say that we want Asterisk
+# to be run as a service
 ldconfig
 chkconfig asterisk on
 ldconfig
+
+# We don't want the sample sip.conf and extensions.conf that come with Asterisk
+# so we will save them off into other files 
 cd /etc/asterisk
 mv sip.conf sip.conf.old
 mv extensions.conf extensions.conf.old
 mv voicemail.conf voicemail.conf.old
 cd $startingplace
-echo $(pwd)
-echo $(ls)
 
+# Update the sip.conf file with the trunk name and ip address from the command line
 sed -i.bak 's/TERMINATIONURI/'$1'/' ./sip.conf
 sed -i.bak 's/OUTSIDE/'$2'/' ./sip.conf
+
+# And then create random passwords for our two users
 sed -i.bak 's/replaceme/'$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)'/' ./sip.conf
 
+# If we were provided with 4 or more command line parameters, we will assume that parameters
+# 3 and 4 are the username and password for the SIP trunk, respectively, and update sip.conf
 if [ $# -gt 3 ]
 then
 sed -i.bak 's/USERNAME/'$3'/' ./sip.conf
 sed -i.bak 's/PASSWORD/'$4'/' ./sip.conf
 fi
 
+# Now that we have updated our new version of sip.conf, we'll copy over the .conf files that came with
+# this script. These create the Twilio SIP trunk for us, a couple of users and some
+# basic call rules
 cp sip.conf /etc/asterisk/sip.conf
 cp extensions.conf /etc/asterisk/extensions.conf
 cp voicemail.conf /etc/asterisk/voicemail.conf
 cp extensions.conf.* /etc/asterisk/.
 
+# And we'll install the extended sounds set for our IVR
 cd /var/lib/asterisk/sounds
 wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-gsm-current.tar.gz
 tar -xzf asterisk-extra-sounds-en-gsm-current.tar.gz
 
+# Finally, we are going to create some TLS certs so that we can use TLS
+# First, we will create a password of between 8 and 16 characters in length
 randlen=$(((RANDOM % 8)+8))
 tlspass=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $randlen | head -n 1)
 
+# And then use this password to create the certificates
 cd /etc/asterisk
 mkdir keys
 cd /usr/src/asterisk-13.*
