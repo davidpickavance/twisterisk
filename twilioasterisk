@@ -19,7 +19,8 @@ sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
 
 cd /usr/src
 yum install ­-y words
-wget https://downloads.sourceforge.net/project/srtp/srtp/1.4.4/srtp­-1.4.4.tgz
+wget http://downloads.sourceforge.net/project/srtp/srtp/1.4.4/srtp­-1.4.4.tgz
+
 tar zxvf srtp-1.4.4.tgz
 cd /usr/src/srtp
 ./configure CFLAGS=-fPIC --prefix=/usr/local/lib
