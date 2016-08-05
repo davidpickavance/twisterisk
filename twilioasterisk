@@ -5,10 +5,8 @@ then
 echo "This script requires at least two parameters, termination URI and public IP address"
 else
 startingplace=$(pwd)
-yum groupinstall –y 'Development Tools'
-y
-yum install –y ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison
-y
+yes | yum groupinstall 'Development Tools'
+yes | yum install ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison
 cd /usr/src/
 git clone https://github.com/akheron/jansson.git
 cd jansson
@@ -18,11 +16,24 @@ make && make install
 cd ..
 yum install -y wget
 sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+
+cd /usr/src
+yum install ­-y words
+wget https://downloads.sourceforge.net/project/srtp/srtp/1.4.4/srtp­-1.4.4.tgz
+tar zxvf srtp-1.4.4.tgz
+cd /usr/src/srtp
+./configure CFLAGS=-fPIC --prefix=/usr/local/lib
+make
+sed -i.bak 's|RTPW=rtpw|RTPW=./rtpw|' ./test/rtpw_test.sh
+make runtest
+make install
+
+cd /usr/src
 wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.tar.gz
 tar -xzvf asterisk*
 cd asterisk-13.*
 ./bootstrap.sh
-./configure
+./configure --with-srtp=/usr/local/lib
 make && make install
 make samples
 make config
@@ -33,12 +44,14 @@ ldconfig
 cd /etc/asterisk
 mv sip.conf sip.conf.old
 mv extensions.conf extensions.conf.old
+mv voicemail.conf voicemail.conf.old
 cd $startingplace
 echo $(pwd)
 echo $(ls)
 
 sed -i.bak 's/TERMINATIONURI/'$1'/' ./sip.conf
 sed -i.bak 's/OUTSIDE/'$2'/' ./sip.conf
+sed -i.bak 's/replaceme/'$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)'/' ./sip.conf
 
 if [ $# -gt 3 ]
 then
@@ -48,7 +61,12 @@ fi
 
 cp sip.conf /etc/asterisk/sip.conf
 cp extensions.conf /etc/asterisk/extensions.conf
+cp voicemail.conf /etc/asterisk/voicemail.conf
 cp extensions.conf.* /etc/asterisk/.
+
+cd /var/lib/asterisk/sounds
+wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-gsm-current.tar.gz
+tar -xzf asterisk-extra-sounds-en-gsm-current.tar.gz
 
 cd /etc/asterisk
 mkdir keys
