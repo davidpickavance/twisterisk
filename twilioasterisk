@@ -69,8 +69,11 @@ cd /var/lib/asterisk/sounds
 wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-gsm-current.tar.gz
 tar -xzf asterisk-extra-sounds-en-gsm-current.tar.gz
 
+randlen = $(((RANDOM % 8)+8))
+tlspass = $(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $randlen | head -n 1)
+
 cd /etc/asterisk
 mkdir keys
 cd /usr/src/asterisk-13.*
-./contrib/scripts/ast_tls_cert -C $2 -O "My PBX" -d /etc/asterisk/keys
+yes $tlspass | ./contrib/scripts/ast_tls_cert -C $2 -O "My PBX" -d /etc/asterisk/keys
 fi
