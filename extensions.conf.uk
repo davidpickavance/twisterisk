@@ -1,8 +1,17 @@
 [from­-twilio]
-exten => _X.,1,Dial(SIP/1001)
-exten => _+X.,1,Dial(SIP/1001)
+exten => _+44XXXXXXXXXX,1,Answer(500)
+same => n(loop),Background(press-1&for-sales&or&press-2&for-service)
+same => n,WaitExten()
+
+Exten => 1,1,Goto(from-phones,1001,1)
+Exten => 2,1,Goto(from-phones,1002,1)
 
 [from­-phones]
+exten => XXXX,1,Dial(SIP/${EXTEN})
+same => n,VoiceMail(${EXTEN}@users)
+same => n,PlayBack(vm-goodbye)
+same => n,HangUp()
+
 exten => _0XXXXXXXXXX,1,Set(CALLERID(all)="Trunk Test" <02035555123>)
 same => n,Dial(SIP/twilio0/+44${EXTEN:1})
 
