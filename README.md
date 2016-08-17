@@ -11,7 +11,7 @@ Copy and paste the following commands into the CLI of your server
 
 sudo su  
 apt-get -y install subversion git-core  
-git clone https://github.com/davidpickavance/twisterisk.git -b debian 
+git clone https://github.com/davidpickavance/twisterisk.git -b debian  
 cd twisterisk  
 chmod +x twilioasterisk  
 
