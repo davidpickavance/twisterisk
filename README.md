@@ -4,7 +4,7 @@ This script helps you to quickly install Asterisk on a compatible server and get
 ## Compatibility
 
 This script has been tested with the following OSs
-- RedHat
+- Debian Wheezy
 
 ## Installation
 Copy and paste the following commands into the CLI of your server
