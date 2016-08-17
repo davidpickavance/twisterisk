@@ -10,7 +10,7 @@ This script has been tested with the following OSs
 Copy and paste the following commands into the CLI of your server
 
 sudo su  
-yum -y install subversion git-core  
+apt-get -y install subversion git-core  
 git clone https://github.com/davidpickavance/twisterisk.git  
 cd twisterisk  
 chmod +x twilioasterisk  
