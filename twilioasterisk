@@ -18,16 +18,16 @@ else
 startingplace=$(pwd)
 
 # And then install the prerequisite libraries
-yes | yum groupinstall 'Development Tools'
-yes | yum install ncurses-devel uuid-devel libuuid-devel libxml2-devel sqlite-devel bison
+apt-get update
+yes | apt-get install build-essential
+yes | apt-get install openssl libxml2-dev libncurses5-dev uuid-dev sqlite3 libsqlite3-dev pkg-config libjansson-dev
 cd /usr/src/
 git clone https://github.com/akheron/jansson.git
 cd jansson
 autoreconf -i
-./configure -prefix=/usr/
-make && make install
+./configure
+make && make install && ldconfig
 cd ..
-yum install -y wget
 
 # Turn off SELINUX
 sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
@@ -35,13 +35,13 @@ sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
 # Now, we're going to instal the SRTP library, in case we want to use TLS/SRTP with
 # our SIP trunk. First, we have to install words, because it is used in the installation
 # of srtp
+apt-get install wamerican
 cd /usr/src
-yes | yum install words
 wget http://downloads.sourceforge.net/project/srtp/srtp/1.4.4/srtp-1.4.4.tgz
 
 tar zxvf srtp-1.4.4.tgz
 cd /usr/src/srtp
-./configure CFLAGS=-fPIC --prefix=/usr/local/lib
+./configure CFLAGS=-fPIC --prefix=/usr
 make
 sed -i.bak 's|RTPW=rtpw|RTPW=./rtpw|' ./test/rtpw_test.sh
 make runtest
@@ -53,16 +53,18 @@ wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-13-current.ta
 tar -xzvf asterisk*
 cd asterisk-13.*
 ./bootstrap.sh
-./configure --with-srtp=/usr/local/lib
+./configure --with-srtp=/usr/
 make && make install
 make samples
 make config
 make samples
 
-# Make sure we are aware of the new libraries and say that we want Asterisk
-# to be run as a service
-ldconfig
-chkconfig asterisk on
+# Copt the rc file to /etc/init.d
+cp ./contrib/init.d/rc.debian.asterisk /etc/init.d/asterisk
+update-rc.d asterisk defaults
+/etc/init.d/asterisk start
+
+# Make sure we are aware of the new libraries
 ldconfig
 
 # We don't want the sample sip.conf and extensions.conf that come with Asterisk
