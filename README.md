@@ -25,13 +25,13 @@ The script has two mandatory arguments and two optional arguments. Please note t
 1. The first part of the termination URI for your Twilio trunk. So, if your Termination URI is mytrunk.pstn.twilio.com then the first argument is mytrunk  
 2. The second is the public IP address of your Asterisk server in dotted decimal notation, e.g. 1.2.3.4  
 
-## Optional Arguments  
+### Optional Arguments  
 If you have set Credentials on your Twilio trunk, you should provide the username and password  
 
 So the command syntax is  
 twilioasterisk termination_uri ip_address [username password]  
 
-## Examples  
+### Examples  
 **Example 1**  
 I have created a trunk with  
 - A Termination URI of mytrunk.pstn.twilio.com  
